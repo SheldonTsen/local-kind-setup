@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: kedro-run-base
+spec:
+  entrypoint: kedro-run
+  serviceAccountName: kedro-runner-sa    # this will be the same
+  arguments:
+    parameters:
+      - name: env
+      - name: pipeline
+      - name: image
+  templates:
+    - name: kedro-run
+      inputs:
+        parameters:
+          - name: env
+          - name: pipeline
+          - name: image
+      container:
+        image: "{{inputs.parameters.image}}"
+        command: [bash, -c]
+        args:
+          - |
+            echo "Running pipeline '{{inputs.parameters.pipeline}}' with env '{{inputs.parameters.env}}'"
+            kedro run --env={{inputs.parameters.env}} --pipeline={{inputs.parameters.pipeline}}
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "1Gi"

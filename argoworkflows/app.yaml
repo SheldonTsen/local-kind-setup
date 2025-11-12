@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-workflow-sa
+  namespace: argo-workflows
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: executor
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtaskresults
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argo-workflow-role
+  namespace: argo-workflows
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtaskresults
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argo-workflow-binding
+  namespace: argo-workflows
+subjects:
+  - kind: ServiceAccount
+    name: argo-workflow-sa
+    namespace: argo-workflows
+roleRef:
+  kind: Role
+  name: argo-workflow-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-workflows
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-workflows
+    targetRevision: 0.45.14  # helm search repo argo/argo-workflows --versions | head -5
+    helm:
+      releaseName: argo-workflows
+      values: | 
+        workflow:
+          serviceAccount:
+            name: argo-workflow-sa
+        server:
+          enabled: true
+          ingress:
+            enabled: false  # disable Helm-managed ingress, use custom Traefik IngressRoute instead
+          extraArgs:
+            - --auth-mode=server
+        controller:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo-workflows
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argo-workflows-server
+  namespace: argo-workflows
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`argo-workflows.localhost`)
+      services:
+        - name: argo-workflows-server
+          port: 2746
+
+---
+

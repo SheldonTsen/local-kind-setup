@@ -1,0 +1,26 @@
+## Argo Configs
+configs:
+  # General Argo CD configuration. Any values you put under `.configs.cm` are passed to argocd-cm ConfigMap.
+  ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml
+  cm:
+    # -- Create the argocd-cm configmap for [declarative setup]
+    create: true
+
+    # -- Enable exec feature in Argo UI
+    ## Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/rbac/#exec-resource
+    exec.enabled: true
+
+    # -- Enable local admin user
+    ## Ref: https://argo-cd.readthedocs.io/en/latest/faq/#how-to-disable-admin-user
+    admin.enabled: true
+
+  params:
+    create: true
+    server.insecure: true
+
+controller:
+  args:
+    - --repo-server-timeout-seconds=30
+  env:
+    - name: ARGOCD_RECONCILIATION_TIMEOUT
+      value: "30s"

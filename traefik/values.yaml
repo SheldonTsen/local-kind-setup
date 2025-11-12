@@ -1,0 +1,19 @@
+
+ingressRoute:
+  dashboard:
+    # Toggle Traefik dashboard for monitoring
+    enabled: true  
+
+ports:
+  traefik:
+    expose: 
+      default: true
+    nodePort: 32090
+  web:
+    nodePort: 32080
+  websecure:
+    nodePort: 32443
+
+
+service:
+  type: NodePort

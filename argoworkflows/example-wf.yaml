@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: hello-world-template  # fixed name for reuse
+  namespace: argo-workflows
+spec:
+  serviceAccountName: argo-workflow-sa
+  entrypoint: whalesay
+  templates:
+    - name: whalesay
+      container:
+        image: docker/whalesay
+        command: [ "cowsay" ]
+        args: [ "hello world" ]
+        resources:
+          limits: 
+            memory: 32Mi
+            cpu: 100m
