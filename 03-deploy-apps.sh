@@ -10,7 +10,8 @@ kubectl apply -f argoworkflows/app.yaml
 # based off ingress configuration
 echo "Logging into Argo CD..."
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=120s
-yes | argocd login argocd-login.localhost:8443 --insecure --username admin --password admin
+# yes | argocd login argocd-login.localhost:8443 --insecure --username admin --password admin
+yes | argocd login argocd.localhost:8080 --insecure --username admin --password admin
 
 APP_NAME="argo-workflows"
 NAMESPACE="argocd"

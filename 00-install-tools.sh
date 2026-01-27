@@ -12,3 +12,4 @@ brew install argocd  # https://argo-cd.readthedocs.io/en/stable/cli_installation
 # don't forget to update the colour scheme! 
 # https://k9scli.io/topics/skins/
 
+kubectl patch app argo-workflows -n argocd -p '{"metadata":{"finalizers":null}}' --type=merge

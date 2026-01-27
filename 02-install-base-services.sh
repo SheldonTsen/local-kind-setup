@@ -12,12 +12,18 @@
 
 helm repo add argo https://argoproj.github.io/argo-helm
 helm search repo argo/argo-cd
+# prints something like:
+# NAME            CHART VERSION   APP VERSION     DESCRIPTION                                       
+# argo/argo-cd    9.3.7           v3.2.6          A Helm chart for Argo CD, a declarative, GitOps...
 # helm show values argo/argo-cd --version 8.0.0 > argocd/values.yaml
 
 helm upgrade --install argocd argo/argo-cd \
-  --version 8.0.0 \
+  --version 9.3.7 \
   --values argocd/values.yaml \
   --namespace argocd --create-namespace
+
+# check APP VERSION from output of helm search repo argo/argo-cd matching the CHART VERSION
+kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v3.2.6"
 
 # username is admin
 # print password to console

@@ -1,50 +1,50 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: argo-workflow-sa
-  namespace: argo-workflows
----
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: argo-workflow-sa
+#   namespace: argo-workflows
+# ---
 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: executor
-rules:
-  - apiGroups:
-      - argoproj.io
-    resources:
-      - workflowtaskresults
-    verbs:
-      - create
-      - patch
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: argo-workflow-role
-  namespace: argo-workflows
-rules:
-  - apiGroups:
-      - argoproj.io
-    resources:
-      - workflowtaskresults
-    verbs:
-      - create
-      - patch
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: argo-workflow-binding
-  namespace: argo-workflows
-subjects:
-  - kind: ServiceAccount
-    name: argo-workflow-sa
-    namespace: argo-workflows
-roleRef:
-  kind: Role
-  name: argo-workflow-role
-  apiGroup: rbac.authorization.k8s.io
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: executor
+# rules:
+#   - apiGroups:
+#       - argoproj.io
+#     resources:
+#       - workflowtaskresults
+#     verbs:
+#       - create
+#       - patch
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: argo-workflow-role
+#   namespace: argo-workflows
+# rules:
+#   - apiGroups:
+#       - argoproj.io
+#     resources:
+#       - workflowtaskresults
+#     verbs:
+#       - create
+# #       - patch
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: argo-workflow-binding
+#   namespace: argo-workflows
+# subjects:
+#   - kind: ServiceAccount
+#     name: argo-workflow-sa
+#     namespace: argo-workflows
+# roleRef:
+#   kind: Role
+#   name: argo-workflow-role
+#   apiGroup: rbac.authorization.k8s.io
 
 ---
 
@@ -58,21 +58,27 @@ spec:
   source:
     repoURL: https://argoproj.github.io/argo-helm
     chart: argo-workflows
-    targetRevision: 0.45.14  # helm search repo argo/argo-workflows --versions | head -5
+    targetRevision: 0.45.19  # helm search repo argo/argo-workflows --versions | head -5
     helm:
-      releaseName: argo-workflows
-      values: | 
-        workflow:
-          serviceAccount:
-            name: argo-workflow-sa
+      # releaseName: argo-workflows
+      valuesObject:
+        # workflow:
+        #   serviceAccount:
+        #     name: argo-workflow-sa
+        # server:
+        #   enabled: true
+        #   ingress:
+        #     enabled: false  # disable Helm-managed ingress, use custom Traefik IngressRoute instead
+        #   extraArgs:
+        #     - --auth-mode=server
+        # controller:
+        #   enabled: true
         server:
-          enabled: true
-          ingress:
-            enabled: false  # disable Helm-managed ingress, use custom Traefik IngressRoute instead
           extraArgs:
             - --auth-mode=server
-        controller:
-          enabled: true
+        controller:             # https://stackoverflow.com/questions/64924481/argo-workflow-always-using-default-serviceaccount
+          workflowNamespaces:   # which links to: https://github.com/argoproj/argo-helm/blob/bbac4b365b23630d2d2812522be3ee161e9bd269/charts/argo-workflows/values.yaml#L55
+            - argo-workflows    # might need to keep adding namespaces where jobs are run
   destination:
     server: https://kubernetes.default.svc
     namespace: argo-workflows
@@ -86,7 +92,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: argo-workflows-server
+  name: argo-workflows-ingressroute
   namespace: argo-workflows
 spec:
   entryPoints:
