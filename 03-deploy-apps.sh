@@ -2,7 +2,7 @@
 set -e
 
 kubectl apply -f example-app/app.yaml
-kubectl apply -f example-app/open-source-app.yaml
+# kubectl apply -f example-app/open-source-app.yaml
 
 kubectl create namespace argo-workflows --dry-run=client -o yaml | kubectl apply -f -
 kubectl apply -f argoworkflows/app.yaml
