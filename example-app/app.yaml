@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/SheldonTsen/test-argocd
-    targetRevision: main
+    repoURL: https://github.com/SheldonTsen/local-kind-setup
+    targetRevision: fixes  # revert to main
     path: example-app/open-source
   destination:
     server: https://kubernetes.default.svc
