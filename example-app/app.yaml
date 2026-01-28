@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/SheldonTsen/test-argocd
+    repoURL: https://github.com/SheldonTsen/local-kind-setup
     targetRevision: main
-    path: example-app/
+    path: example-app/open-source
   destination:
     server: https://kubernetes.default.svc
     namespace: guestbook

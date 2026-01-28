@@ -17,10 +17,3 @@ configs:
   params:
     create: true
     server.insecure: true
-
-controller:
-  args:
-    - --repo-server-timeout-seconds=30
-  env:
-    - name: ARGOCD_RECONCILIATION_TIMEOUT
-      value: "30s"
