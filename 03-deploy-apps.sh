@@ -37,5 +37,18 @@ while true; do
 done
 
 kubectl apply -f argoworkflows/example-wf.yaml
-# kubectl apply -f argoworkflows/kedro-wf.yaml
+
+WF=$(kubectl create -n argo-workflows -f - -o name <<'EOF'
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: hello-world-
+spec:
+  workflowTemplateRef:
+    name: hello-world-template
+EOF
+)
+
+kubectl wait -n argo-workflows --for=condition=Completed "$WF" --timeout=120s && \
+kubectl get -n argo-workflows "$WF" -o jsonpath='{.status.phase}{"\n"}'
 
