@@ -37,5 +37,5 @@ while true; do
 done
 
 kubectl apply -f argoworkflows/example-wf.yaml
-kubectl apply -f argoworkflows/kedro-wf.yaml
+# kubectl apply -f argoworkflows/kedro-wf.yaml
 

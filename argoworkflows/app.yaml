@@ -73,6 +73,10 @@ spec:
         #     - --auth-mode=server
         # controller:
         #   enabled: true
+        workflow:
+          serviceAccount:
+            create: true
+            name: argo-workflows-sa
         server:
           extraArgs:
             - --auth-mode=server

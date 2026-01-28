@@ -4,12 +4,12 @@ metadata:
   name: hello-world-template  # fixed name for reuse
   namespace: argo-workflows
 spec:
-  serviceAccountName: argo-workflow-sa
+  serviceAccountName: argo-workflows-sa
   entrypoint: whalesay
   templates:
     - name: whalesay
       container:
-        image: docker/whalesay
+        image: rancher/cowsay
         command: [ "cowsay" ]
         args: [ "hello world" ]
         resources:
