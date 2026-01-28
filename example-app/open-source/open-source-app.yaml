@@ -21,20 +21,3 @@ spec:
 
 # kubectl patch application example-app -p '{"metadata": {"finalizers": null}}' --type merge -n argocd
 
-
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: guestbook-ui
-  namespace: guestbook-opensource
-spec:
-  entryPoints:
-    - web
-  routes:
-    - kind: Rule
-      match: Host(`guestbook.localhost`)
-      services:
-        - name: guestbook-ui
-          port: 80
-

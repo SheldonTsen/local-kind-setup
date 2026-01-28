@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+# install brew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+
+
 # install kind
 # For AMD64 / x86_64
 [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.31.0/kind-linux-amd64
@@ -17,3 +22,13 @@ sudo apt-get update
 sudo apt-get install helm
 
 # install kubectl
+mkdir installation
+cd installation
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# install k9s
+curl -LO https://github.com/derailed/k9s/releases/download/v0.31.7/k9s_Linux_amd64.tar.gz
+tar xvzf k9s_Linux_amd64.tar.gz
+chmod +x k9s
+sudo mv k9s /usr/local/bin/
